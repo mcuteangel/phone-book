@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دفترچه تلفن</title>
+<style>
+:root{
+  --bg:#f1f4fa; --card:#ffffff; --ink:#1e293b; --muted:#64748b;
+  --brand:#4f46e5; --brand-d:#4338ca; --accent:#0ea5e9;
+  --ok:#16a34a; --danger:#dc2626; --line:#e2e8f0; --star:#f59e0b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Tahoma,"Segoe UI",Arial,sans-serif; font-size:15px; line-height:1.7;
+}
+.wrap{max-width:920px;margin:0 auto;padding:0 14px 60px}
+header.hero{
+  background:linear-gradient(135deg,var(--brand),#7c3aed);
+  color:#fff; padding:26px 14px 22px; margin:0 -14px 18px;
+  border-radius:0 0 22px 22px; box-shadow:0 4px 18px rgba(79,70,229,.25);
+}
+header.hero h1{margin:0;font-size:22px}
+header.hero p{margin:4px 0 0;opacity:.9;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:10px 6px;text-align:center;box-shadow:0 1px 4px rgba(15,23,42,.05)}
+.stat b{display:block;font-size:20px;color:var(--brand)}
+.stat span{font-size:12px;color:var(--muted)}
+.toolbar{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.toolbar input[type=search]{
+  flex:1 1 200px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+  font-family:inherit;font-size:14px;background:#f8fafc;color:var(--ink);
+}
+.toolbar select{padding:10px;border:1px solid var(--line);border-radius:10px;
+  font-family:inherit;font-size:14px;background:#f8fafc;color:var(--ink)}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:14px;
+  cursor:pointer;background:var(--brand);color:#fff;transition:.15s}
+.btn:hover{background:var(--brand-d)}
+.btn.ghost{background:#eef2ff;color:var(--brand)}
+.btn.ghost:hover{background:#e0e7ff}
+.btn.danger{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+.btn.small{padding:6px 10px;font-size:12px}
+h2.sec{font-size:16px;margin:18px 2px 8px;color:var(--ink)}
+.list{display:grid;gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:12px 14px;box-shadow:0 1px 4px rgba(15,23,42,.05)}
+.card .top{display:flex;align-items:center;gap:8px}
+.card .name{font-weight:700;font-size:16px;flex:1}
+.star{cursor:pointer;font-size:20px;color:#cbd5e1;background:none;border:0;padding:0 2px}
+.star.on{color:var(--star)}
+.badge{font-size:11px;background:#eef2ff;color:var(--brand);border-radius:20px;
+  padding:2px 10px;white-space:nowrap}
+.card .rows{margin-top:6px;font-size:13.5px;color:var(--muted)}
+.card .rows div{margin:2px 0}
+.card a{color:var(--accent);text-decoration:none}
+.card a:hover{text-decoration:underline}
+.card .acts{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.bday{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;
+  padding:8px 12px;margin-bottom:8px;font-size:13.5px}
+.bday b{color:#b45309}
+.empty{text-align:center;color:var(--muted);padding:34px 10px;background:var(--card);
+  border:1px dashed var(--line);border-radius:14px}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;
+  align-items:flex-start;justify-content:center;padding:24px 12px;z-index:50;overflow:auto}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;max-width:560px;width:100%;padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 12px;font-size:17px}
+.frm{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.frm .full{grid-column:1/-1}
+.frm label{font-size:12.5px;color:var(--muted);display:block;margin-bottom:2px}
+.frm input,.frm select,.frm textarea{
+  width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;
+  font-family:inherit;font-size:14px;background:#f8fafc;color:var(--ink)}
+.frm textarea{resize:vertical;min-height:64px}
+.frm .chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
+.frm .chk input{width:auto}
+.modal .foot{margin-top:14px;display:flex;gap:8px;justify-content:flex-start}
+.hint{font-size:12px;color:var(--muted);margin-top:10px;background:#f8fafc;
+  border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+footer.note{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
+@media(max-width:560px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .frm{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>📒 دفترچه تلفن</h1>
+    <p>نسخه آفلاین تک‌فایل — بدون نیاز به اینترنت، داده‌ها فقط در همین مرورگر ذخیره می‌شوند</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b id="stTotal">۰</b><span>کل مخاطبین</span></div>
+    <div class="stat"><b id="stGroups">۰</b><span>گروه‌ها</span></div>
+    <div class="stat"><b id="stFav">۰</b><span>علاقه‌مندی‌ها</span></div>
+    <div class="stat"><b id="stBday">۰</b><span>تولد ۳۰ روز آینده</span></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="🔍 جست‌وجو در نام، شماره، ایمیل...">
+    <select id="fGroup"><option value="">همه گروه‌ها</option></select>
+    <button class="btn ghost" id="btnFavOnly" title="فقط علاقه‌مندی‌ها">☆ علاقه‌مندی‌ها</button>
+    <button class="btn" id="btnAdd">＋ مخاطب جدید</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn ghost" id="btnImportCsv">📥 ورود از CSV</button>
+    <button class="btn ghost" id="btnImportXls">📥 ورود از Excel</button>
+    <button class="btn ghost" id="btnExportCsv">📤 خروجی CSV</button>
+    <button class="btn ghost" id="btnBackup">💾 بکاپ کامل</button>
+    <input type="file" id="fileCsv" accept=".csv,text/csv" hidden>
+    <input type="file" id="fileXls" accept=".xls,.xlsx" hidden>
+    <input type="file" id="fileJson" accept=".json,application/json" hidden>
+  </div>
+  <div class="toolbar">
+    <button class="btn ghost small" id="btnRestore">♻️ بازگردانی بکاپ</button>
+    <button class="btn danger small" id="btnWipe">🗑 حذف همه مخاطبین</button>
+  </div>
+
+  <div id="bdayBox"></div>
+
+  <h2 class="sec">مخاطبین</h2>
+  <div class="list" id="list"></div>
+
+  <footer class="note">💡 برای انتقال به کامپیوتر دیگر، «بکاپ کامل» بگیرید و در آنجا «بازگردانی بکاپ» را بزنید.</footer>
+</div>
+
+<div class="overlay" id="ovForm">
+  <div class="modal">
+    <h3 id="formTitle">مخاطب جدید</h3>
+    <form id="frm" autocomplete="off">
+      <div class="frm">
+        <div><label>نام و نام خانوادگی *</label><input id="fName" required></div>
+        <div><label>موبایل *</label><input id="fMobile" required inputmode="tel" dir="ltr" style="text-align:right"></div>
+        <div><label>تلفن ثابت</label><input id="fPhone" inputmode="tel" dir="ltr" style="text-align:right"></div>
+        <div><label>ایمیل</label><input id="fEmail" type="email" dir="ltr" style="text-align:right"></div>
+        <div><label>گروه</label><input id="fGroupIn" list="dlGroups" placeholder="مثلاً: خانواده"></div>
+        <div><label>تاریخ تولد</label><input id="fBday" placeholder="yyyy-mm-dd" dir="ltr" style="text-align:right"></div>
+        <div class="full"><label>آدرس</label><input id="fAddr"></div>
+        <div class="full"><label>توضیحات</label><textarea id="fNotes"></textarea></div>
+        <div class="chk full"><input type="checkbox" id="fFav"><label for="fFav" style="margin:0">⭐ علاقه‌مندی</label></div>
+      </div>
+      <datalist id="dlGroups"></datalist>
+      <div class="foot">
+        <button type="submit" class="btn">💾 ذخیره</button>
+        <button type="button" class="btn ghost" id="btnCancel">انصراف</button>
+      </div>
+    </form>
+    <div class="hint">فیلدهای ستاره‌دار اجباری‌اند. شماره‌ها به‌صورت متن ذخیره می‌شوند (صفر اول شماره حفظ می‌شود).</div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============ ذخیره‌سازی ============ */
+const LS_C = "pbk.contacts.v1", LS_G = "pbk.groups.v1";
+let contacts = [], groups = ["خانواده","دوستان","کاری","سایر"];
+let editingId = null, favOnly = false;
+
+function load(){
+  try{ contacts = JSON.parse(localStorage.getItem(LS_C)) || []; }catch(e){ contacts = []; }
+  try{ const g = JSON.parse(localStorage.getItem(LS_G)); if(Array.isArray(g)&&g.length) groups = g; }catch(e){}
+}
+function save(){
+  localStorage.setItem(LS_C, JSON.stringify(contacts));
+  localStorage.setItem(LS_G, JSON.stringify(groups));
+}
+function uid(){ return "c"+Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36); }
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"']/g, function(m){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];
+  });
+}
+function faNum(n){ return String(n).replace(/[0-9]/g, function(d){ return "۰۱۲۳۴۵۶۷۸۹"[d]; }); }
+function normPhone(p){ return String(p||"").replace(/[\s\-()]/g,""); }
+
+/* ============ رندر ============ */
+const $ = function(id){ return document.getElementById(id); };
+
+function renderGroups(){
+  const sel = $("fGroup"), cur = sel.value;
+  sel.innerHTML = '<option value="">همه گروه‌ها</option>' +
+    groups.map(function(g){ return '<option value="'+esc(g)+'">'+esc(g)+'</option>'; }).join("");
+  sel.value = cur;
+  $("dlGroups").innerHTML = groups.map(function(g){ return '<option value="'+esc(g)+'">'; }).join("");
+}
+
+function filtered(){
+  const q = $("q").value.trim(), fg = $("fGroup").value;
+  return contacts.filter(function(c){
+    if(favOnly && !c.fav) return false;
+    if(fg && c.group !== fg) return false;
+    if(q){
+      const hay = [c.name,c.mobile,c.phone,c.email,c.group,c.address,c.notes].join(" ");
+      if(hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  }).sort(function(a,b){ return String(a.name).localeCompare(String(b.name),"fa"); });
+}
+
+function upcomingBirthdays(){
+  const out = [], now = new Date(); now.setHours(0,0,0,0);
+  contacts.forEach(function(c){
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(c.birthday||"");
+    if(!m) return;
+    const md = parseInt(m[2],10), dd = parseInt(m[3],10);
+    let next = new Date(now.getFullYear(), md-1, dd);
+    if(next < now) next = new Date(now.getFullYear()+1, md-1, dd);
+    const diff = Math.round((next-now)/86400000);
+    if(diff <= 30) out.push({c:c, diff:diff});
+  });
+  out.sort(function(a,b){ return a.diff-b.diff; });
+  return out;
+}
+
+function render(){
+  renderGroups();
+  const list = filtered();
+  $("stTotal").textContent = faNum(contacts.length);
+  $("stGroups").textContent = faNum(groups.length);
+  $("stFav").textContent = faNum(contacts.filter(function(c){return c.fav;}).length);
+  const bds = upcomingBirthdays();
+  $("stBday").textContent = faNum(bds.length);
+
+  const bb = $("bdayBox");
+  bb.innerHTML = bds.length
+    ? '<h2 class="sec">🎂 تولدهای نزدیک</h2>' + bds.map(function(x){
+        const t = x.diff===0 ? "امروز" : (x.diff===1 ? "فردا" : faNum(x.diff)+" روز دیگر");
+        return '<div class="bday">🎂 تولد <b>'+esc(x.c.name)+'</b> — '+t+'</div>';
+      }).join("")
+    : "";
+
+  const el = $("list");
+  if(!list.length){
+    el.innerHTML = '<div class="empty">مخاطبی نیست.<br>از «＋ مخاطب جدید» یا «ورود از CSV/Excel» شروع کنید.</div>';
+    return;
+  }
+  el.innerHTML = list.map(function(c){
+    const tel = normPhone(c.mobile), tel2 = normPhone(c.phone);
+    let rows = "";
+    if(c.mobile) rows += '<div>📱 <a href="tel:'+esc(tel)+'">'+esc(c.mobile)+'</a> &nbsp;<a href="sms:'+esc(tel)+'">✉️ پیام</a></div>';
+    if(c.phone)  rows += '<div>☎️ <a href="tel:'+esc(tel2)+'">'+esc(c.phone)+'</a></div>';
+    if(c.email)  rows += '<div>✉️ <a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a></div>';
+    if(c.address) rows += '<div>📍 '+esc(c.address)+'</div>';
+    if(c.birthday) rows += '<div>🎂 '+esc(c.birthday)+'</div>';
+    if(c.notes) rows += '<div>📝 '+esc(c.notes)+'</div>';
+    return '<div class="card" data-id="'+c.id+'">'+
+      '<div class="top">'+
+        '<button class="star'+(c.fav?" on":"")+'" data-act="fav" title="علاقه‌مندی">'+(c.fav?"★":"☆")+'</button>'+
+        '<span class="name">'+esc(c.name)+'</span>'+
+        (c.group?'<span class="badge">'+esc(c.group)+'</span>':"")+
+      '</div>'+
+      '<div class="rows">'+rows+'</div>'+
+      '<div class="acts">'+
+        '<button class="btn ghost small" data-act="edit">✏️ ویرایش</button>'+
+        '<button class="btn danger small" data-act="del">🗑 حذف</button>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+}
+</script>
+<script>
+"use strict";
+/* ============ فرم ثبت/ویرایش ============ */
+function openForm(c){
+  editingId = c ? c.id : null;
+  $("formTitle").textContent = c ? "ویرایش مخاطب" : "مخاطب جدید";
+  $("fName").value   = c ? c.name : "";
+  $("fMobile").value = c ? c.mobile : "";
+  $("fPhone").value  = c ? (c.phone||"") : "";
+  $("fEmail").value  = c ? (c.email||"") : "";
+  $("fGroupIn").value= c ? (c.group||"") : "";
+  $("fBday").value   = c ? (c.birthday||"") : "";
+  $("fAddr").value   = c ? (c.address||"") : "";
+  $("fNotes").value  = c ? (c.notes||"") : "";
+  $("fFav").checked  = c ? !!c.fav : false;
+  $("ovForm").classList.add("open");
+  $("fName").focus();
+}
+function closeForm(){ $("ovForm").classList.remove("open"); }
+
+$("btnAdd").addEventListener("click", function(){ openForm(null); });
+$("btnCancel").addEventListener("click", closeForm);
+$("ovForm").addEventListener("click", function(e){ if(e.target === this) closeForm(); });
+
+$("frm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const name = $("fName").value.trim(), mobile = $("fMobile").value.trim();
+  if(!name || !mobile){ alert("نام و موبایل اجباری‌اند."); return; }
+  const g = $("fGroupIn").value.trim();
+  if(g && groups.indexOf(g) === -1) groups.push(g);
+  const data = {
+    name:name, mobile:mobile,
+    phone:$("fPhone").value.trim(), email:$("fEmail").value.trim(),
+    group:g, birthday:$("fBday").value.trim(),
+    address:$("fAddr").value.trim(), notes:$("fNotes").value.trim(),
+    fav:$("fFav").checked
+  };
+  if(editingId){
+    const c = contacts.find(function(x){ return x.id===editingId; });
+    if(c) Object.assign(c, data);
+  }else{
+    data.id = uid();
+    contacts.push(data);
+  }
+  save(); closeForm(); render();
+});
+
+/* ============ عملیات روی کارت‌ها ============ */
+$("list").addEventListener("click", function(e){
+  const btn = e.target.closest("[data-act]");
+  if(!btn) return;
+  const id = btn.closest(".card").getAttribute("data-id");
+  const c = contacts.find(function(x){ return x.id===id; });
+  if(!c) return;
+  const act = btn.getAttribute("data-act");
+  if(act === "fav"){ c.fav = !c.fav; save(); render(); }
+  else if(act === "edit"){ openForm(c); }
+  else if(act === "del"){
+    if(confirm('مخاطب «'+c.name+'» حذف شود؟')){
+      contacts = contacts.filter(function(x){ return x.id!==id; });
+      save(); render();
+    }
+  }
+});
+
+$("q").addEventListener("input", render);
+$("fGroup").addEventListener("change", render);
+$("btnFavOnly").addEventListener("click", function(){
+  favOnly = !favOnly;
+  this.textContent = favOnly ? "★ علاقه‌مندی‌ها" : "☆ علاقه‌مندی‌ها";
+  render();
+});
+$("btnWipe").addEventListener("click", function(){
+  if(contacts.length && confirm("همه "+faNum(contacts.length)+" مخاطب حذف شوند؟ این عمل قابل بازگشت نیست!")){
+    contacts = []; save(); render();
+  }
+});
+
+/* ============ CSV ============ */
+function parseCSV(text){
+  const rows = []; let row = [], val = "", q = false;
+  text = text.replace(/^\uFEFF/, "");
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    if(q){
+      if(ch === '"'){ if(text[i+1] === '"'){ val += '"'; i++; } else q = false; }
+      else val += ch;
+    }else if(ch === '"'){ q = true; }
+    else if(ch === ","){ row.push(val); val = ""; }
+    else if(ch === "\n" || ch === "\r"){
+      if(ch === "\r" && text[i+1] === "\n") i++;
+      row.push(val); val = "";
+      if(row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+    }else val += ch;
+  }
+  row.push(val);
+  if(row.length > 1 || row[0] !== "") rows.push(row);
+  return rows;
+}
+function csvCell(v){
+  v = String(v==null?"":v);
+  return /[",\n\r]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+}
+
+const COLMAP = {
+  "نام":"name","name":"name","نام و نام خانوادگی":"name",
+  "موبایل":"mobile","موبایل اصلی":"mobile","mobile":"mobile","تلفن همراه":"mobile","phone":"mobile",
+  "تلفن":"phone","تلفن ثابت":"phone","phone2":"phone",
+  "ایمیل":"email","email":"email","پست الکترونیک":"email",
+  "گروه":"group","group":"group",
+  "آدرس":"address","address":"address","نشانی":"address",
+  "تولد":"birthday","تاریخ تولد":"birthday","birthday":"birthday",
+  "توضیحات":"notes","یادداشت":"notes","notes":"notes","note":"notes"
+};
+function importRows(rows){
+  if(!rows.length) return 0;
+  const head = rows[0].map(function(h){ return COLMAP[String(h).trim().toLowerCase()] || COLMAP[String(h).trim()] || null; });
+  if(head.indexOf("name") === -1 && head.indexOf("mobile") === -1){
+    alert("سرفصل ستون‌ها شناخته نشد. ستون‌ها باید شامل «نام» و «موبایل» باشند.");
+    return 0;
+  }
+  const seen = {};
+  contacts.forEach(function(c){ seen[normPhone(c.mobile)] = 1; });
+  let n = 0;
+  for(let i=1;i<rows.length;i++){
+    const r = rows[i], o = { id:uid(), fav:false };
+    head.forEach(function(k, j){ if(k) o[k] = (r[j]||"").trim(); });
+    if(!o.name && !o.mobile) continue;
+    const key = normPhone(o.mobile || o.name);
+    if(seen[key]) continue;
+    seen[key] = 1;
+    if(o.group && groups.indexOf(o.group) === -1) groups.push(o.group);
+    contacts.push(Object.assign({name:"",mobile:"",phone:"",email:"",group:"",birthday:"",address:"",notes:""}, o));
+    n++;
+  }
+  save(); render();
+  return n;
+}
+
+$("btnImportCsv").addEventListener("click", function(){ $("fileCsv").click(); });
+$("fileCsv").addEventListener("change", function(){
+  const f = this.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(){
+    const n = importRows(parseCSV(String(rd.result||"")));
+    alert(faNum(n)+" مخاطب وارد شد.");
+  };
+  rd.readAsText(f, "UTF-8");
+  this.value = "";
+});
+
+$("btnExportCsv").addEventListener("click", function(){
+  if(!contacts.length){ alert("مخاطبی برای خروجی نیست."); return; }
+  const head = ["نام","موبایل","تلفن ثابت","ایمیل","گروه","تاریخ تولد","آدرس","توضیحات"];
+  const lines = [head.map(csvCell).join(",")].concat(contacts.map(function(c){
+    return [c.name,c.mobile,c.phone,c.email,c.group,c.birthday,c.address,c.notes].map(csvCell).join(",");
+  }));
+  download("\uFEFF"+lines.join("\r\n"), "phone-book.csv", "text/csv;charset=utf-8");
+});
+
+/* ============ بکاپ JSON ============ */
+function download(content, filename, mime){
+  const b = new Blob([content], {type:mime});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+$("btnBackup").addEventListener("click", function(){
+  download(JSON.stringify({app:"phone-book", v:1, groups:groups, contacts:contacts}, null, 1),
+    "phone-book-backup.json", "application/json");
+});
+$("btnRestore").addEventListener("click", function(){ $("fileJson").click(); });
+$("fileJson").addEventListener("change", function(){
+  const f = this.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(){
+    try{
+      const d = JSON.parse(String(rd.result||""));
+      if(!d || !Array.isArray(d.contacts)) throw 0;
+      if(confirm(faNum(d.contacts.length)+" مخاطب از بکاپ خوانده شد. جایگزین مخاطبین فعلی شود؟")){
+        contacts = d.contacts.map(function(c){ if(!c.id) c.id = uid(); return c; });
+        if(Array.isArray(d.groups) && d.groups.length) groups = d.groups;
+        save(); render();
+        alert("بازگردانی انجام شد.");
+      }
+    }catch(e){ alert("فایل بکاپ معتبر نیست."); }
+  };
+  rd.readAsText(f, "UTF-8");
+  this.value = "";
+});
+</script>
+<script>
+"use strict";
+/* ============ ورود از Excel (با کتابخانه SheetJS از CDN؛ نیاز به اینترنت دارد) ============ */
+let xlsxLoading = null;
+function loadXlsx(){
+  if(window.XLSX) return Promise.resolve();
+  if(xlsxLoading) return xlsxLoading;
+  xlsxLoading = new Promise(function(res, rej){
+    const s = document.createElement("script");
+    s.src = "https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js";
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+  return xlsxLoading;
+}
+$("btnImportXls").addEventListener("click", function(){ $("fileXls").click(); });
+$("fileXls").addEventListener("change", function(){
+  const f = this.files[0]; if(!f) return;
+  this.value = "";
+  loadXlsx().then(function(){
+    const rd = new FileReader();
+    rd.onload = function(){
+      try{
+        const wb = XLSX.read(rd.result, {type:"array"});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
+        const n = importRows(rows.map(function(r){ return r.map(function(x){ return x==null?"":String(x); }); }));
+        alert(faNum(n)+" مخاطب از اکسل وارد شد.");
+      }catch(e){ alert("خواندن فایل اکسل ناموفق بود."); }
+    };
+    rd.readAsArrayBuffer(f);
+  }).catch(function(){
+    alert("برای ورود از اکسل به اینترنت نیاز است (دانلود کتابخانه). آفلاین هستید؟ فایل را در اکسل به CSV تبدیل کنید و «ورود از CSV» را بزنید.");
+  });
+});
+
+/* ============ شروع ============ */
+load();
+render();
+</script>
+</body>
+</html>
